@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model Org {
+  id            String @id @default(uuid())
+  name          String
+  email         String @unique
+  password_hash String
+  author_name   String
+  phone         String @unique
+  role          Role   @default(ADMIN)
+
+  cep       String  @unique
+  state     String
+  city      String
+  latitude  Decimal
+  longitude Decimal
+
+  pets Pet[]
+
+  @@map("orgs")
+}
+
+model User {
+  id            String @id @default(uuid())
+  name          String
+  email         String @unique
+  password_hash String
+  role          Role   @default(USER)
+
+  @@map("users")
+}
+
+model Pet {
+  id           String          @id @default(uuid())
+  name         String
+  about        String          @db.VarChar(300)
+  age          PetAge
+  size         PetSize
+  energy_level PetEnergyLevel
+  independence PetIndependence
+  environment  PetEnvironment
+  photos       String[]
+  requirements String[]
+
+  created_at DateTime @default(now())
+
+  org    Org    @relation(fields: [org_id], references: [id])
+  org_id String
+
+  @@map("pets")
+}
+
+enum PetAge {
+  PUPPY
+  ADULT
+  SENIOR
+}
+
+enum PetSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum PetEnergyLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum PetIndependence {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum PetEnvironment {
+  SMALL_SPACE
+  MEDIUM_SPACE
+  LARGE_SPACE
+}
