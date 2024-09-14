@@ -1,12 +1,15 @@
+import { ZodFastifyRoute } from "@/@types/zod-fastify-route";
 import { verifyRole } from "@/http/middlewares/verify-role";
 import { ResourceNotFoundError } from "@/services/errors/resource-not-found-error";
 import { makeRegisterPetService } from "@/services/factories/make-register-pet-service";
 import { PetAge, PetEnergyLevel, PetEnvironment, PetIndependence, PetSize } from "@prisma/client";
-import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import z from "zod";
 
-export const registerRoute: FastifyPluginAsyncZod = async (app) => {
-  app.post('/pets', {
+export const registerRoute: ZodFastifyRoute = async (app, method, path) => {
+  app.route({
+    method,
+    url: path,
+    onRequest: [ verifyRole('ADMIN') ],
     schema: {
       summary: 'Register a pet',
       tags: ['Pets'],
@@ -22,27 +25,27 @@ export const registerRoute: FastifyPluginAsyncZod = async (app) => {
         requirements: z.array(z.string()).optional(),
       }),
     },
-    onRequest: [ verifyRole('ADMIN') ],
-  }, async (req, res) => {
-    const pet = req.body
+    handler: async (req, res) => {
+      const pet = req.body
 
-    const registerPetService = makeRegisterPetService()
+      const registerPetService = makeRegisterPetService()
 
-    const org = req.user
+      const org = req.user
 
-    try {
-      await registerPetService.execute({
-        orgId: org.sub,
-        pet,
-      })
+      try {
+        await registerPetService.execute({
+          orgId: org.sub,
+          pet,
+        })
 
-      return res.status(201).send()
-    } catch(error) {
-      if (error instanceof ResourceNotFoundError) {
-        return res.status(404).send({ message: error.message })
+        return res.status(201).send()
+      } catch(error) {
+        if (error instanceof ResourceNotFoundError) {
+          return res.status(404).send({ message: error.message })
+        }
+
+        throw error
       }
-
-      throw error
-    }
+    },
   })
 }

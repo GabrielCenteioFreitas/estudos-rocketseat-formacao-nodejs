@@ -1,8 +1,9 @@
 import { FastifyInstance } from "fastify";
-import { loginRoute } from "./login";
+import { A, loginRoute } from "./login";
 import { registerRoute } from "./register";
 
+
 export const orgsRoutes = async (app: FastifyInstance) => {
-  app.register(registerRoute) // POST "/orgs"
-  app.register(loginRoute) // POST "/orgs/sessions"
+  app.register(() => registerRoute(app, 'POST', '/orgs'))
+  app.register(() => loginRoute(app, 'POST', '/orgs/sessions'))
 }
