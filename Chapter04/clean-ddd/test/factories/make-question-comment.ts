@@ -8,8 +8,8 @@ export function makeQuestionComment(
 ) {
   const questionComment = QuestionComment.create(
     {
-      authorId: new UniqueEntityID('1'),
-      questionId: new UniqueEntityID('1'),
+      authorId: new UniqueEntityID(),
+      questionId: new UniqueEntityID(),
       content: faker.lorem.text(),
       ...override,
     },

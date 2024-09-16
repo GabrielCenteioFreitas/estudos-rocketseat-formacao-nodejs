@@ -2,18 +2,21 @@ import { makeQuestion } from 'test/factories/make-question';
 import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-question-comments-repository';
 import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questions-repository';
 import { CommentOnQuestionUseCase } from './comment-on-question';
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachments-repository';
 
 let questionsRepository: InMemoryQuestionsRepository;
-let questionCommentRepository: InMemoryQuestionCommentsRepository;
+let questionCommentsRepository: InMemoryQuestionCommentsRepository;
+let questionAttachmentsRepository: InMemoryQuestionAttachmentsRepository;
 let sut: CommentOnQuestionUseCase;
 
 describe('Comment on Question Use Case', () => {
   beforeEach(() => {
-    questionsRepository = new InMemoryQuestionsRepository()
-    questionCommentRepository = new InMemoryQuestionCommentsRepository()
+    questionAttachmentsRepository = new InMemoryQuestionAttachmentsRepository()
+    questionsRepository = new InMemoryQuestionsRepository(questionAttachmentsRepository)
+    questionCommentsRepository = new InMemoryQuestionCommentsRepository()
     sut = new CommentOnQuestionUseCase(
       questionsRepository,
-      questionCommentRepository
+      questionCommentsRepository
     )
   })
 
@@ -28,6 +31,6 @@ describe('Comment on Question Use Case', () => {
       content: 'Test Comment'
     })
   
-    expect(questionCommentRepository.items[0].content).toEqual('Test Comment')
+    expect(questionCommentsRepository.items[0].content).toEqual('Test Comment')
   })
 })
