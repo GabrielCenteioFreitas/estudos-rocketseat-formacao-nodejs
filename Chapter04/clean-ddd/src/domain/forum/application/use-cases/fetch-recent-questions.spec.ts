@@ -16,11 +16,11 @@ describe('Fetch Recent Questions Use Case', () => {
     await questionsRepository.create(makeQuestion({ createdAt: new Date(2024, 8, 10) }))
     await questionsRepository.create(makeQuestion({ createdAt: new Date(2024, 8, 15) }))
 
-    const { questions } = await sut.execute({
+    const result = await sut.execute({
       page: 1,
     })
 
-    expect(questions).toEqual([
+    expect(result.value?.questions).toEqual([
       expect.objectContaining({ createdAt: new Date(2024, 8, 15) }),
       expect.objectContaining({ createdAt: new Date(2024, 8, 14) }),
     ])
@@ -33,10 +33,10 @@ describe('Fetch Recent Questions Use Case', () => {
       )
     }
 
-    const { questions } = await sut.execute({
+    const result = await sut.execute({
       page: 2,
     })
 
-    expect(questions).toHaveLength(2)
+    expect(result.value?.questions).toHaveLength(2)
   })
 })
