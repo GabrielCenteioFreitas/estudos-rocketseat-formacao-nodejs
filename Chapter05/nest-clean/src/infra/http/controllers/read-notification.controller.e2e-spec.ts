@@ -1,3 +1,4 @@
+import { Slug } from "@/domain/forum/enterprise/entities/value-objects/slug";
 import { AppModule } from "@/infra/app.module";
 import { DatabaseModule } from "@/infra/database/database.module";
 import { PrismaService } from "@/infra/database/prisma/prisma.service";
@@ -5,64 +6,59 @@ import { INestApplication } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Test } from "@nestjs/testing";
 import request from "supertest";
-import { AnswerFactory } from "test/factories/make-answer";
+import { AttachmentFactory } from "test/factories/make-attachment";
+import { NotificationFactory } from "test/factories/make-notification";
 import { QuestionFactory } from "test/factories/make-question";
+import { QuestionAttachmentFactory } from "test/factories/make-question-attachment";
 import { StudentFactory } from "test/factories/make-student";
 
-describe('Choose question best answer (e2e)', () => {
+describe('Get question by slug (e2e)', () => {
   let app: INestApplication;
-  let studentFactory: StudentFactory;
-  let questionFactory: QuestionFactory;
-  let answerFactory: AnswerFactory;
   let prisma: PrismaService;
+  let studentFactory: StudentFactory;
+  let notificationFactory: NotificationFactory;
   let jwt: JwtService;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [StudentFactory, QuestionFactory, AnswerFactory],
+      providers: [StudentFactory, NotificationFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
 
     prisma = moduleRef.get(PrismaService)
     studentFactory = moduleRef.get(StudentFactory)
-    questionFactory = moduleRef.get(QuestionFactory)
-    answerFactory = moduleRef.get(AnswerFactory)
+    notificationFactory = moduleRef.get(NotificationFactory)
     jwt = moduleRef.get(JwtService)
 
     await app.init()
   })
 
-  test('[PATCH] /answers/:answerId/choose-as-best', async () => {
-    const user = await studentFactory.makePrismaStudent()
+  test('[PATCH] /notifications/:notificationId/read', async () => {
+    const user = await studentFactory.makePrismaStudent({ name: 'John Doe' })
 
     const token = jwt.sign({ sub: user.id.toString() })
 
-    const question = await questionFactory.makePrismaQuestion({
-      authorId: user.id,
+    const notification = await notificationFactory.makePrismaNotification({
+      recipientId: user.id,
     })
 
-    const answer = await answerFactory.makePrismaAnswer({
-      questionId: question.id,
-      authorId: user.id,
-    })
-
-    const answerId = answer.id.toString()
+    const notificationId = notification.id.toString()
 
     const response = await request(app.getHttpServer())
-      .patch(`/answers/${answerId}/choose-as-best`)
+      .patch(`/notifications/${notificationId}/read`)
       .set('Authorization', `Bearer ${token}`)
       .send()
 
     expect(response.statusCode).toBe(204)
-
-    const questionOnDatabase = await prisma.question.findFirst({
+    
+    const notificationOnDatabase = await prisma.notification.findFirst({
       where: {
-        id: question.id.toString()
-      }
+        recipientId: user.id.toString(),
+      },
     })
 
-    expect(questionOnDatabase?.bestAnswerId).toEqual(answerId)
+    expect(notificationOnDatabase?.readAt).not.toBeNull()
   })
 })

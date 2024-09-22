@@ -40,6 +40,8 @@ import { FetchAnswerCommentsUseCase } from '@/domain/forum/application/use-cases
 import { UploadAttachmentController } from './controllers/upload-attachment.controller';
 import { UploadAndCreateAttachmentUseCase } from '@/domain/forum/application/use-cases/upload-and-create-attachment';
 import { StorageModule } from '../storage/storage.module';
+import { ReadNotificationController } from './controllers/read-notification.controller';
+import { ReadNotificationUseCase } from '@/domain/notification/application/use-cases/read-notification';
 
 @Module({
   imports: [
@@ -67,6 +69,7 @@ import { StorageModule } from '../storage/storage.module';
     FetchQuestionCommentsController,
     FetchAnswerCommentsController,
     UploadAttachmentController,
+    ReadNotificationController,
   ],
   providers: [
     CreateQuestionUseCase,
@@ -88,6 +91,7 @@ import { StorageModule } from '../storage/storage.module';
     FetchQuestionCommentsUseCase,
     FetchAnswerCommentsUseCase,
     UploadAndCreateAttachmentUseCase,
+    ReadNotificationUseCase,
   ],
 })
 export class HttpModule {}
