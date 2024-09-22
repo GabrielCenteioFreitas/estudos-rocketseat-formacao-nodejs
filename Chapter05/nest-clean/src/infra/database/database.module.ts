@@ -18,8 +18,10 @@ import { PrismaQuestionsRepository } from './prisma/repositories/prisma-question
 import { PrismaStudentsRepository } from './prisma/repositories/prisma-students-repository';
 import { PrismaNotificationsRepository } from './prisma/repositories/prisma-notifications-repository';
 import { NotificationsRepository } from '@/domain/notification/application/repositories/notifications-repository';
+import { CacheModule } from '../cache/cache.module';
 
 @Module({
+  imports: [CacheModule],
   providers: [
     PrismaService,
     {
