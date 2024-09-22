@@ -8,11 +8,15 @@ import { InMemoryQuestionsRepository } from "test/repositories/in-memory-questio
 import { waitFor } from "test/utils/wait-for";
 import { SendNotificationUseCase } from "../use-cases/send-notification";
 import { OnQuestionBestAnswerChosen } from "./on-question-best-answer-chosen";
+import { InMemoryStudentsRepository } from "test/repositories/in-memory-students-repository";
+import { InMemoryAttachmentsRepository } from "test/repositories/in-memory-attachments-repository";
 
 let questionAttachmentsRepository: InMemoryQuestionAttachmentsRepository;
 let answerAttachmentsRepository: InMemoryAnswerAttachmentsRepository;
 let questionsRepository: InMemoryQuestionsRepository;
 let answersRepository: InMemoryAnswersRepository;
+let studentsRepository: InMemoryStudentsRepository;
+let attachmentsRepository: InMemoryAttachmentsRepository;
 let notificationsRepository: InMemoryNotificationsRepository;
 let sendNotificationUseCase: SendNotificationUseCase;
 
@@ -22,7 +26,13 @@ describe('On Question Best Answer Chosen', () => {
   beforeEach(() => {
     answerAttachmentsRepository = new InMemoryAnswerAttachmentsRepository()
     questionAttachmentsRepository = new InMemoryQuestionAttachmentsRepository()
-    questionsRepository = new InMemoryQuestionsRepository(questionAttachmentsRepository)
+    studentsRepository = new InMemoryStudentsRepository()
+    attachmentsRepository = new InMemoryAttachmentsRepository()
+    questionsRepository = new InMemoryQuestionsRepository(
+      questionAttachmentsRepository,
+      attachmentsRepository,
+      studentsRepository,
+    )
     answersRepository = new InMemoryAnswersRepository(answerAttachmentsRepository)
     notificationsRepository = new InMemoryNotificationsRepository()
     sendNotificationUseCase = new SendNotificationUseCase(notificationsRepository)
