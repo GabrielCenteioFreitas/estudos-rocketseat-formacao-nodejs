@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  ignite-nodejs-chapter05-challenge-pg:
+    container_name: pg
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=db
+      - PGDATA=/data/postgres
+    volumes:
+      - ./data/pg:/data/postgres
