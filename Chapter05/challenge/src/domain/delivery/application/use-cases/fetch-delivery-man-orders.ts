@@ -6,6 +6,7 @@ import { OrdersRepository } from "../repositories/orders-repository";
 import { AdminsRepository } from "../repositories/admins-repository";
 import { DeliveryMenRepository } from "../repositories/delivery-men-repository";
 import { NotAllowedError } from "@/core/errors/use-cases/not-allowed-error";
+import { Order } from "../../enterprise/entities/order";
 
 export interface FetchDeliveryManOrdersUseCaseRequest {
   authorId: string;
@@ -15,7 +16,7 @@ export interface FetchDeliveryManOrdersUseCaseRequest {
 export type FetchDeliveryManOrdersUseCaseResponse = Either<
   NotAllowedError | ResourceNotFoundError,
   {
-    orders: OrderDetails[],
+    orders: Order[],
   }
 >
 
@@ -45,7 +46,7 @@ export class FetchDeliveryManOrdersUseCase {
       }
     }
 
-    const orders = await this.ordersRepository.findByDeliveryManId(deliveryManId)
+    const orders = await this.ordersRepository.findManyByDeliveryManId(deliveryManId)
 
     return right({
       orders,

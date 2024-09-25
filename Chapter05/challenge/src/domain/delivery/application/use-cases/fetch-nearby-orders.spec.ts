@@ -9,39 +9,67 @@ import { InMemoryOrdersRepository } from "test/repositories/in-memory-orders-rep
 import { InMemoryRecipientsRepository } from "test/repositories/in-memory-recipients-repository";
 import { FetchDeliveryManOrdersUseCase } from "./fetch-delivery-man-orders";
 import { makeRecipient } from "test/factories/make-recipient";
+import { FetchNearbyOrdersUseCase } from "./fetch-nearby-orders";
+import { Location } from "../../enterprise/entities/value-objects/location";
 
 let ordersRepository: InMemoryOrdersRepository;
 let recipientsRepository: InMemoryRecipientsRepository;
-let adminsRepository: InMemoryAdminsRepository;
 let deliveryMenRepository: InMemoryDeliveryMenRepository;
-let sut: FetchDeliveryManOrdersUseCase;
+let sut: FetchNearbyOrdersUseCase;
 
 describe('Fetch delivery man orders - Use Case', () => {
   beforeEach(() => {
     recipientsRepository = new InMemoryRecipientsRepository()
     ordersRepository = new InMemoryOrdersRepository(recipientsRepository)
     deliveryMenRepository = new InMemoryDeliveryMenRepository()
-    adminsRepository = new InMemoryAdminsRepository()
-    sut = new FetchDeliveryManOrdersUseCase(
+    sut = new FetchNearbyOrdersUseCase(
       ordersRepository,
-      adminsRepository,
       deliveryMenRepository,
     )
   })
 
-  it('should be able to get delivery man orders', async () => {
-    const deliveryMan = makeDeliveryMan()
+  it('should be able to fetch nearby orders', async () => {
+    const deliveryMan = makeDeliveryMan({
+      location: Location.create({
+        latitude: -9.8793563,
+        longitude: -59.6120217,
+      })
+    })
     deliveryMenRepository.create(deliveryMan)
 
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 5; i++) {
       const recipient = makeRecipient({
         name: `Recipient ${i}`,
+        location: Location.create({
+          latitude: -9.8793563,
+          longitude: -59.6120217,
+        })
       })
 
       recipientsRepository.create(recipient)
 
       const order = makeOrder({
-        title: `Order ${i}`,
+        title: `Order 1.${i}`,
+        deliveryManId: deliveryMan.id,
+        recipientId: recipient.id,
+      })
+
+      ordersRepository.create(order)
+    }
+
+    for (let i = 1; i <= 5; i++) {
+      const recipient = makeRecipient({
+        name: `Recipient ${i}`,
+        location: Location.create({
+          latitude: 0,
+          longitude: 0,
+        })
+      })
+
+      recipientsRepository.create(recipient)
+
+      const order = makeOrder({
+        title: `Order 2.${i}`,
         deliveryManId: deliveryMan.id,
         recipientId: recipient.id,
       })
@@ -55,57 +83,18 @@ describe('Fetch delivery man orders - Use Case', () => {
     })
 
     expect(result.isRight()).toBe(true)
-    expect(result.value).toMatchObject({
-      orders: expect.arrayContaining([
-        expect.objectContaining({
-          title: 'Order 1',
-        }),
-        expect.objectContaining({
-          title: 'Order 2',
-        }),
-      ])
-    })
-  })
-
-  it('should be able to get delivery man orders being an admin', async () => {
-    const admin = makeAdmin()
-    adminsRepository.create(admin)
-
-    const deliveryMan = makeDeliveryMan()
-    deliveryMenRepository.create(deliveryMan)
-
-    for (let i = 1; i <= 10; i++) {
-      const recipient = makeRecipient({
-        name: `Recipient ${i}`,
-      })
-
-      recipientsRepository.create(recipient)
-
-      const order = makeOrder({
-        title: `Order ${i}`,
-        deliveryManId: deliveryMan.id,
-        recipientId: recipient.id,
-      })
-
-      ordersRepository.create(order)
+    if (!('orders' in result.value)) {
+      throw new Error()
     }
-
-    const result = await sut.execute({
-      authorId: admin.id.toString(),
-      deliveryManId: deliveryMan.id.toString(),
-    })
-
-    expect(result.isRight()).toBe(true)
-    expect(result.value).toMatchObject({
-      orders: expect.arrayContaining([
-        expect.objectContaining({
-          title: 'Order 1',
-        }),
-        expect.objectContaining({
-          title: 'Order 2',
-        }),
-      ])
-    })
+    expect(result.value.orders).toHaveLength(5)
+    expect(result.value.orders).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        title: 'Order 1.1',
+      }),
+      expect.objectContaining({
+        title: 'Order 1.5',
+      }),
+    ]))
   })
 
   it('should not be able to get a delivery man orders from another delivery man', async () => {
@@ -125,7 +114,7 @@ describe('Fetch delivery man orders - Use Case', () => {
     expect(result1.value).toBeInstanceOf(NotAllowedError)
   })
 
-  it('should not be able to get a delivery man orders being a recipient', async () => {
+  it('should not be able to get a delivery man orders not being a recipient', async () => {
     const deliveryMan = makeDeliveryMan()
     deliveryMenRepository.create(deliveryMan)
 
@@ -142,11 +131,8 @@ describe('Fetch delivery man orders - Use Case', () => {
   })
 
   it('should not be able to get a inexistent delivery man orders', async () => {
-    const deliveryMan = makeDeliveryMan()
-    deliveryMenRepository.create(deliveryMan)
-
     const result1 = await sut.execute({
-      authorId: deliveryMan.id.toString(),
+      authorId: 'non-existing-id',
       deliveryManId: 'non-existing-id',
     })
 

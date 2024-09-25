@@ -14,7 +14,7 @@ export class Location extends ValueObject<LocationProps> {
     return this.props.latitude
   }
 
-  get coordinates() {
+  getCoordinates() {
     return {
       latitude: this.props.latitude,
       longitude: this.props.longitude,

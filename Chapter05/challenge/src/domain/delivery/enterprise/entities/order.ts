@@ -1,6 +1,7 @@
-import { Entity } from "@/core/entities/entity";
+import { AggregateRoot } from "@/core/entities/aggregate-root";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { OrderStatus } from "./value-objects/order-status";
+import { OrderStatusChangedEvent } from "../events/order-status-changed-event";
 
 export interface OrderProps {
   recipientId: UniqueEntityID;
@@ -12,7 +13,7 @@ export interface OrderProps {
   deliveryPhotoUrl?: string | null;
 }
 
-export class Order extends Entity<OrderProps> {
+export class Order extends AggregateRoot<OrderProps> {
   get recipientId() {
     return this.props.recipientId
   }
@@ -54,7 +55,15 @@ export class Order extends Entity<OrderProps> {
   }
   
   set status(status: OrderStatus) {
+    const prevStatus = this.props.status
+
     this.props.status = status
+
+    if (prevStatus !== status) {
+      this.addDomainEvent(
+        new OrderStatusChangedEvent(this, prevStatus)
+      )
+    }
   }
   
   set deliveredAt(deliveredAt: Date | null) {
