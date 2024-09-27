@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { execSync } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 import { DomainEvents } from '@/core/events/domain-events'
-// import { Redis } from 'ioredis'
+import { Redis } from 'ioredis'
 import { envSchema } from '@/infra/env/env'
 
 config({ path: '.env', override: true })
@@ -12,11 +12,11 @@ config({ path: '.env.test', override: true })
 const env = envSchema.parse(process.env)
 
 const prisma = new PrismaClient()
-// const redis = new Redis({
-//   host: env.REDIS_HOST,
-//   port: env.REDIS_PORT,
-//   db: env.REDIS_DB,
-// })
+const redis = new Redis({
+  host: env.REDIS_HOST,
+  port: env.REDIS_PORT,
+  db: env.REDIS_DB,
+})
 
 function generateUniqueDatabaseUrl(schemaId: string) {
   if (!env.DATABASE_URL) {
@@ -39,7 +39,7 @@ beforeAll(async () => {
 
   DomainEvents.shouldRun = false
 
-  // await redis.flushdb()
+  await redis.flushdb()
 
   execSync('pnpm prisma migrate deploy')
 })

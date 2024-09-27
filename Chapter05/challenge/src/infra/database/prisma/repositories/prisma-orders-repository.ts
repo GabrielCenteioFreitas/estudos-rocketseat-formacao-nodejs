@@ -6,11 +6,15 @@ import { Injectable } from "@nestjs/common";
 import { OrderDetails } from "@/domain/delivery/enterprise/entities/value-objects/order-details";
 import { Order as PrismaOrder } from "@prisma/client";
 import { PrismaOrderDetailsMapper } from "../mappers/prisma-order-details-mapper";
+import { DomainEvents } from "@/core/events/domain-events";
+import { CacheRepository } from "@/infra/cache/cache-repository";
+import { Decimal } from "@prisma/client/runtime/library";
 
 @Injectable()
 export class PrismaOrdersRepository implements OrdersRepository {
   constructor(
     private prisma: PrismaService,
+    private cache: CacheRepository,
   ) {}
 
   async create(order: Order): Promise<void> {
@@ -24,12 +28,17 @@ export class PrismaOrdersRepository implements OrdersRepository {
   async save(order: Order): Promise<void> {
     const data = PrismaOrderMapper.toPrisma(order)
 
-    await this.prisma.order.update({
-      where: {
-        id: data.id,
-      },
-      data,
-    })
+    await Promise.all([
+      this.prisma.order.update({
+        where: {
+          id: data.id,
+        },
+        data,
+      }),
+      this.cache.delete(`order:${order.id.toString()}:details`)
+    ])
+
+    DomainEvents.dispatchEventsForAggregate(order.id)
   }
 
   async delete(order: Order): Promise<void> {
@@ -57,6 +66,17 @@ export class PrismaOrdersRepository implements OrdersRepository {
   }
 
   async findDetailsById(id: string): Promise<OrderDetails | null> {
+    const cacheHit = await this.cache.get(`order:${id}:details`)
+
+    if (cacheHit) {
+      const cachedData = JSON.parse(cacheHit)
+
+      cachedData.recipient.latitude = new Decimal(cachedData.recipient.latitude)
+      cachedData.recipient.longitude = new Decimal(cachedData.recipient.longitude)
+
+      return PrismaOrderDetailsMapper.toDomain(cachedData)
+    }
+
     const order = await this.prisma.order.findUnique({
       where: {
         id,
@@ -69,6 +89,11 @@ export class PrismaOrdersRepository implements OrdersRepository {
     if (!order) {
       return null
     }
+
+    await this.cache.set(
+      `order:${id}:details`,
+      JSON.stringify(order),
+    )
 
     return PrismaOrderDetailsMapper.toDomain(order)
   }

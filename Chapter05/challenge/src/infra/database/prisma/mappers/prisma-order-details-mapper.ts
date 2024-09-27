@@ -14,6 +14,8 @@ export class PrismaOrderDetailsMapper {
       throw new Error()
     }
 
+    console.log(typeof raw.recipient.latitude)
+
     return OrderDetails.create({
       createdAt: raw.createdAt,
       location: Location.create({

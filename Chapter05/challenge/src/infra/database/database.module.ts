@@ -8,8 +8,12 @@ import { DeliveryMenRepository } from "@/domain/delivery/application/repositorie
 import { PrismaDeliveryMenRepository } from "./prisma/repositories/prisma-delivery-men-repository";
 import { OrdersRepository } from "@/domain/delivery/application/repositories/orders-repository";
 import { PrismaOrdersRepository } from "./prisma/repositories/prisma-orders-repository";
+import { NotificationsRepository } from "@/domain/notification/application/repositories/notifications-repository";
+import { PrismaNotificationsRepository } from "./prisma/repositories/prisma-notifications-repository";
+import { CacheModule } from "../cache/cache.module";
 
 @Module({
+  imports: [CacheModule],
   providers: [
     PrismaService,
     {
@@ -28,6 +32,10 @@ import { PrismaOrdersRepository } from "./prisma/repositories/prisma-orders-repo
       provide: OrdersRepository,
       useClass: PrismaOrdersRepository,
     },
+    {
+      provide: NotificationsRepository,
+      useClass: PrismaNotificationsRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -35,6 +43,7 @@ import { PrismaOrdersRepository } from "./prisma/repositories/prisma-orders-repo
     RecipientsRepository,
     DeliveryMenRepository,
     OrdersRepository,
+    NotificationsRepository,
   ],
 })
 export class DatabaseModule {}

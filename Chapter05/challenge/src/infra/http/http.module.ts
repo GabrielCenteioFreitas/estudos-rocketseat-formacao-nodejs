@@ -47,11 +47,15 @@ import { FetchDeliveryManOrdersController } from "./controllers/fetch-delivery-m
 import { FetchDeliveryManOrdersUseCase } from "@/domain/delivery/application/use-cases/fetch-delivery-man-orders";
 import { FetchNearbyOrdersController } from "./controllers/fetch-nearby-orders.controller";
 import { FetchNearbyOrdersUseCase } from "@/domain/delivery/application/use-cases/fetch-nearby-orders";
+import { UploadDeliveryPhotoUseCase } from "@/domain/delivery/application/use-cases/upload-delivery-photo";
+import { UploadAttachmentController } from "./controllers/upload-delivery-photo.controller";
+import { StorageModule } from "../storage/storage.module";
 
 @Module({
   imports: [
     DatabaseModule,
     CryptographyModule,
+    StorageModule,
   ],
   controllers: [
     RegisterAdminController,
@@ -77,6 +81,7 @@ import { FetchNearbyOrdersUseCase } from "@/domain/delivery/application/use-case
     MarkOrderAsDeliveredController,
     FetchDeliveryManOrdersController,
     FetchNearbyOrdersController,
+    UploadAttachmentController,
   ],
   providers: [
     RegisterAdminUseCase,
@@ -102,6 +107,7 @@ import { FetchNearbyOrdersUseCase } from "@/domain/delivery/application/use-case
     MarkOrderAsDeliveredUseCase,
     FetchDeliveryManOrdersUseCase,
     FetchNearbyOrdersUseCase,
+    UploadDeliveryPhotoUseCase,
   ],
 })
 export class HttpModule {}
