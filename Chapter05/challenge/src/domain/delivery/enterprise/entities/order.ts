@@ -19,7 +19,7 @@ export class Order extends AggregateRoot<OrderProps> {
   }
 
   get deliveryManId() {
-    return this.props.deliveryManId
+    return this.props.deliveryManId ?? null
   }
   
   get title() {
@@ -35,11 +35,11 @@ export class Order extends AggregateRoot<OrderProps> {
   }
   
   get deliveredAt() {
-    return this.props.deliveredAt
+    return this.props.deliveredAt ?? null
   }
   
   get deliveryPhotoUrl() {
-    return this.props.deliveryPhotoUrl
+    return this.props.deliveryPhotoUrl ?? null
   }
 
   set recipientId(recipientId: UniqueEntityID) {

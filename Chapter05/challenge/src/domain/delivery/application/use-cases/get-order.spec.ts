@@ -5,7 +5,7 @@ import { makeRecipient } from "test/factories/make-recipient";
 import { InMemoryAdminsRepository } from "test/repositories/in-memory-admins-repository";
 import { InMemoryOrdersRepository } from "test/repositories/in-memory-orders-repository";
 import { InMemoryRecipientsRepository } from "test/repositories/in-memory-recipients-repository";
-import { GetOrderUseCase } from "./get-order-by-id";
+import { GetOrderUseCase } from "./get-order";
 
 let ordersRepository: InMemoryOrdersRepository;
 let recipientsRepository: InMemoryRecipientsRepository;

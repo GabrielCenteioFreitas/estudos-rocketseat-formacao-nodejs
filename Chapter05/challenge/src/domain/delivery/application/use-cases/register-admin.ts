@@ -34,7 +34,7 @@ export class RegisterAdminUseCase {
     const adminWithSameCPF = await this.adminsRepository.findByCPF(cpf)
 
     if (adminWithSameCPF) {
-      return left(new CpfAlreadyInUseError(cpf.toString()))
+      return left(new CpfAlreadyInUseError(cpf))
     }
 
     const hashedPassword = await this.hashGenerator.hash(password)

@@ -20,6 +20,10 @@ describe('Register recipient - Use Case', () => {
       name: 'Recipient',
       cpf: '123456789',
       password: '123456',
+      location: {
+        latitude: 0,
+        longitude: 0,
+      },
     })
 
     expect(result.isRight()).toBe(true)
@@ -33,12 +37,20 @@ describe('Register recipient - Use Case', () => {
       name: 'Recipient 01',
       cpf: '123456789',
       password: '123456',
+      location: {
+        latitude: 0,
+        longitude: 0,
+      },
     })
 
     const result = await sut.execute({
       name: 'Recipient 02',
       cpf: '123456789',
       password: '123456',
+      location: {
+        latitude: 0,
+        longitude: 0,
+      },
     })
 
     expect(result.isLeft()).toBe(true)

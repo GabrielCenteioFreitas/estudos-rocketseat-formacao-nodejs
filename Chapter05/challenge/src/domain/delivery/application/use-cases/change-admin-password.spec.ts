@@ -18,6 +18,7 @@ describe('Change admin password - Use Case', () => {
     sut = new ChangeAdminPasswordUseCase(
       adminsRepository,
       fakeHasher,
+      fakeHasher,
     )
   })
 

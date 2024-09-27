@@ -9,6 +9,7 @@ import { InMemoryOrdersRepository } from "test/repositories/in-memory-orders-rep
 import { InMemoryRecipientsRepository } from "test/repositories/in-memory-recipients-repository";
 import { FetchDeliveryManOrdersUseCase } from "./fetch-delivery-man-orders";
 import { makeRecipient } from "test/factories/make-recipient";
+import { OrderStatus } from "../../enterprise/entities/value-objects/order-status";
 
 let ordersRepository: InMemoryOrdersRepository;
 let recipientsRepository: InMemoryRecipientsRepository;
@@ -41,9 +42,12 @@ describe('Fetch delivery man orders - Use Case', () => {
       recipientsRepository.create(recipient)
 
       const order = makeOrder({
-        title: `Order ${i}`,
-        deliveryManId: deliveryMan.id,
         recipientId: recipient.id,
+        title: `Order ${i}`,
+        status: OrderStatus.create('DELIVERED'),
+        deliveryManId: deliveryMan.id,
+        deliveryPhotoUrl: 'fake-url',
+        deliveredAt: new Date(2024, 9, 26),
       })
 
       ordersRepository.create(order)
@@ -82,9 +86,12 @@ describe('Fetch delivery man orders - Use Case', () => {
       recipientsRepository.create(recipient)
 
       const order = makeOrder({
-        title: `Order ${i}`,
-        deliveryManId: deliveryMan.id,
         recipientId: recipient.id,
+        title: `Order ${i}`,
+        status: OrderStatus.create('DELIVERED'),
+        deliveryManId: deliveryMan.id,
+        deliveryPhotoUrl: 'fake-url',
+        deliveredAt: new Date(2024, 9, 26),
       })
 
       ordersRepository.create(order)

@@ -1,9 +1,10 @@
 import { Either, left, right } from "@/core/either";
 import { InvalidCredentialsError } from "@/core/errors/use-cases/invalid-credentials-error";
+import { Role } from "@/core/types/roles";
 import { Injectable } from "@nestjs/common";
+import { Encrypter } from "../cryptography/encrypter";
 import { HashComparer } from "../cryptography/hash-comparer";
 import { RecipientsRepository } from "../repositories/recipients-repository";
-import { Encrypter } from "../cryptography/encrypter";
 
 export interface AuthenticateRecipientUseCaseRequest {
   cpf: string;
@@ -43,9 +44,8 @@ export class AuthenticateRecipientUseCase {
     
     const token = await this.encrypter.encrypt({
       sub: recipient.id.toString(),
-      role: 'RECIPIENT',
+      role: Role.Recipient,
     })
-
     return right({
       token,
     })

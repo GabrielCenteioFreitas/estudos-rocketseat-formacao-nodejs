@@ -1,0 +1,68 @@
+@baseUrl = http://localhost:3333
+@authToken = {{authenticate_admin.response.body.token}}
+
+###
+# @name register_admin
+POST {{baseUrl}}/register/admin
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Admin",
+  "cpf": "11122233346",
+  "password": "123456"
+}
+
+###
+# @name authenticate_admin
+POST {{baseUrl}}/sessions/admin
+Content-Type: application/json
+
+{
+  "cpf": "11122233344",
+  "password": "123456"
+}
+
+###
+# @name register_recipient
+POST {{baseUrl}}/register/recipient
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Recipient",
+  "cpf": "11122233347",
+  "password": "123456",
+  "location": {
+    "latitude": 0,
+    "longitude": 0
+  }
+}
+
+###
+# @name authenticate_recipient
+POST {{baseUrl}}/sessions/recipient
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "cpf": "11122233347",
+  "password": "123456"
+}
+
+###
+# @name change_recipient_password
+POST {{baseUrl}}/recipients/ef73f8b8-c78e-4f29-b3cf-2938e70285d8/change-password
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "password": "123456-updated",
+  "newPassword": "123456"
+}
+
+###
+# @name get_recipient
+GET {{baseUrl}}/recipients/ef73f8b8-c78e-4f29-b3cf-2938e70285d8
+Content-Type: application/json
+Authorization: Bearer {{authToken}}

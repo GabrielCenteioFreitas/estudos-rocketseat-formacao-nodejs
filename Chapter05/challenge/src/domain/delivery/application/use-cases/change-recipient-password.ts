@@ -28,7 +28,8 @@ export class ChangeRecipientPasswordUseCase {
   constructor(
     private adminsRepository: AdminsRepository,
     private recipientsRepository: RecipientsRepository,
-    private hasher: HashComparer & HashGenerator,
+    private hashComparer: HashComparer,
+    private hashGenerator: HashGenerator,
   ) {}
 
   async execute({
@@ -49,12 +50,12 @@ export class ChangeRecipientPasswordUseCase {
       return left(new ResourceNotFoundError())
     }
 
-    const doesPasswordMatch = await this.hasher.compare(password, recipient.password)
+    const doesPasswordMatch = await this.hashComparer.compare(password, recipient.password)
     if (!doesPasswordMatch) {
       return left(new InvalidCredentialsError())
     }
     
-    recipient.password = await this.hasher.hash(newPassword)
+    recipient.password = await this.hashGenerator.hash(newPassword)
 
     await this.recipientsRepository.save(recipient)
 

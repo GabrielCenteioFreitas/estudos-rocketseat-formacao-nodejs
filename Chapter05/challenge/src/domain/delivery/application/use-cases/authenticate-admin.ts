@@ -1,9 +1,10 @@
 import { Either, left, right } from "@/core/either";
 import { InvalidCredentialsError } from "@/core/errors/use-cases/invalid-credentials-error";
+import { Role } from "@/core/types/roles";
 import { Injectable } from "@nestjs/common";
+import { Encrypter } from "../cryptography/encrypter";
 import { HashComparer } from "../cryptography/hash-comparer";
 import { AdminsRepository } from "../repositories/admins-repository";
-import { Encrypter } from "../cryptography/encrypter";
 
 export interface AuthenticateAdminUseCaseRequest {
   cpf: string;
@@ -43,7 +44,7 @@ export class AuthenticateAdminUseCase {
     
     const token = await this.encrypter.encrypt({
       sub: admin.id.toString(),
-      role: 'ADMIN',
+      role: Role.Admin,
     })
 
     return right({

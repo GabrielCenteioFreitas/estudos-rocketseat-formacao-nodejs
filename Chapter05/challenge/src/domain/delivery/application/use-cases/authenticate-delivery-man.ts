@@ -1,8 +1,9 @@
 import { Either, left, right } from "@/core/either";
 import { InvalidCredentialsError } from "@/core/errors/use-cases/invalid-credentials-error";
+import { Role } from "@/core/types/roles";
 import { Injectable } from "@nestjs/common";
-import { HashComparer } from "../cryptography/hash-comparer";
 import { Encrypter } from "../cryptography/encrypter";
+import { HashComparer } from "../cryptography/hash-comparer";
 import { DeliveryMenRepository } from "../repositories/delivery-men-repository";
 
 export interface AuthenticateDeliveryManUseCaseRequest {
@@ -43,7 +44,7 @@ export class AuthenticateDeliveryManUseCase {
     
     const token = await this.encrypter.encrypt({
       sub: deliveryMan.id.toString(),
-      role: 'DELIVERY_MAN',
+      role: Role.DeliveryMan,
     })
 
     return right({

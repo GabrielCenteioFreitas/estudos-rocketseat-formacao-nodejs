@@ -23,6 +23,7 @@ describe('Change admin password - Use Case', () => {
       adminsRepository,
       recipientsRepository,
       fakeHasher,
+      fakeHasher,
     )
   })
 

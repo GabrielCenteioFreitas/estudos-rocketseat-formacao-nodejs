@@ -4,7 +4,7 @@ import { RecipientsRepository } from "@/domain/delivery/application/repositories
 import { Order } from "@/domain/delivery/enterprise/entities/order";
 import { OrderDetails } from "@/domain/delivery/enterprise/entities/value-objects/order-details";
 import { InMemoryRecipientsRepository } from "./in-memory-recipients-repository";
-import { getDistanceBetweenCoordinates } from "@/utils/get-distance-between-cordinates";
+import { getDistanceBetweenCoordinates } from "@/core/utils/get-distance-between-cordinates";
 import { DomainEvents } from "@/core/events/domain-events";
 
 export class InMemoryOrdersRepository implements OrdersRepository {
@@ -65,7 +65,10 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   }
 
   async findManyByDeliveryManId(deliveryManId: string): Promise<Order[]> {
-    const orders = this.items.filter(item => item.deliveryManId.equals(new UniqueEntityID(deliveryManId)))
+    const orders = this.items.filter(item => 
+      item.deliveryManId?.equals(new UniqueEntityID(deliveryManId)) &&
+      item.status.value === 'DELIVERED' || item.status.value === 'RETURNED'
+    )
 
     return orders
   }

@@ -16,7 +16,7 @@ export interface ChangeAdminPasswordUseCaseRequest {
 }
 
 export type ChangeAdminPasswordUseCaseResponse = Either<
-NotAllowedError | ResourceNotFoundError | InvalidCredentialsError,
+  NotAllowedError | ResourceNotFoundError | InvalidCredentialsError,
   {
     admin: Admin,
   }
@@ -26,7 +26,8 @@ NotAllowedError | ResourceNotFoundError | InvalidCredentialsError,
 export class ChangeAdminPasswordUseCase {
   constructor(
     private adminsRepository: AdminsRepository,
-    private hasher: HashComparer & HashGenerator,
+    private hashComparer: HashComparer,
+    private hashGenerator: HashGenerator,
   ) {}
 
   async execute({
@@ -45,12 +46,12 @@ export class ChangeAdminPasswordUseCase {
       return left(new ResourceNotFoundError())
     }
 
-    const doesPasswordMatch = await this.hasher.compare(password, admin.password)
+    const doesPasswordMatch = await this.hashComparer.compare(password, admin.password)
     if (!doesPasswordMatch) {
       return left(new InvalidCredentialsError())
     }
     
-    admin.password = await this.hasher.hash(newPassword)
+    admin.password = await this.hashGenerator.hash(newPassword)
 
     await this.adminsRepository.save(admin)
 

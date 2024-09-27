@@ -9,10 +9,6 @@ export class CPF {
     return new CPF(cpf)
   }
 
-  toString() {
-    return this.value
-  }
-
   equals(cpfToCompare: string) {
     return this.value === cpfToCompare
   }

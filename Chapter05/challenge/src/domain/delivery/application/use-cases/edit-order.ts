@@ -50,16 +50,17 @@ export class EditOrderUseCase {
     }
 
     const isTheSameRecipient = order.recipientId.equals(new UniqueEntityID(recipientId))
+
     if (!isTheSameRecipient) {
       const recipient = await this.recipientsRepository.findById(recipientId)
-
+      
       if (!recipient) {
         return left(new ResourceNotFoundError())
       }
-
+      
       order.recipientId = new UniqueEntityID(recipientId)
     }
-
+      
     order.title = title
 
     await this.ordersRepository.save(order)
