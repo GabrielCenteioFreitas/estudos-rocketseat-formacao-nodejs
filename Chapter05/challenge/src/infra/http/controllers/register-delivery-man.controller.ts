@@ -2,6 +2,7 @@ import { CpfAlreadyInUseError } from "@/core/errors/use-cases/cpf-already-in-use
 import { RegisterDeliveryManUseCase } from "@/domain/delivery/application/use-cases/register-delivery-man";
 import { Public } from "@/infra/auth/public";
 import { BadRequestException, Body, ConflictException, Controller, HttpCode, Post } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { z } from "zod";
 import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
 
@@ -19,6 +20,7 @@ const bodyValidationPipe = new ZodValidationPipe(registerDeliveryManBodySchema)
 
 type RegisterDeliveryManBodySchema = z.infer<typeof registerDeliveryManBodySchema>
 
+@ApiTags('Delivery Men')
 @Controller('/register/delivery-man')
 @Public()
 export class RegisterDeliveryManController {
@@ -28,6 +30,7 @@ export class RegisterDeliveryManController {
 
   @Post()
   @HttpCode(201)
+  @ApiOperation({ summary: 'Register Delivery Man' })
   async handle(
     @Body(bodyValidationPipe) body: RegisterDeliveryManBodySchema
   ) {

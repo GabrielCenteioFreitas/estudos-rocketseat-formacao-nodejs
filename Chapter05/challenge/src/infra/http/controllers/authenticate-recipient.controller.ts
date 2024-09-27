@@ -4,6 +4,7 @@ import { Public } from "@/infra/auth/public";
 import { BadRequestException, Body, Controller, HttpCode, Post } from "@nestjs/common";
 import { z } from "zod";
 import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
 const authenticateRecipientBodySchema = z.object({
   cpf: z.string().length(11),
@@ -14,6 +15,7 @@ const bodyValidationPipe = new ZodValidationPipe(authenticateRecipientBodySchema
 
 type AuthenticateRecipientBodySchema = z.infer<typeof authenticateRecipientBodySchema>
 
+@ApiTags('Recipients')
 @Controller('/sessions/recipient')
 @Public()
 export class AuthenticateRecipientController {
@@ -23,6 +25,7 @@ export class AuthenticateRecipientController {
 
   @Post()
   @HttpCode(200)
+  @ApiOperation({ summary: 'Authenticate Recipient' })
   async handle(
     @Body(bodyValidationPipe) body: AuthenticateRecipientBodySchema
   ) {

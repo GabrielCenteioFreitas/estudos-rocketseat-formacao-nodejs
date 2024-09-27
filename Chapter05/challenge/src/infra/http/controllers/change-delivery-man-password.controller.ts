@@ -7,6 +7,7 @@ import { CurrentUser } from "@/infra/auth/current-user.decorator";
 import { UserPayload } from "@/infra/auth/jwt.strategy";
 import { RolesGuard } from "@/infra/auth/rbac/rbac-decorator";
 import { BadRequestException, Body, Controller, HttpCode, Param, Put, UnauthorizedException } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { z } from "zod";
 import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
 
@@ -19,6 +20,7 @@ const bodyValidationPipe = new ZodValidationPipe(changeDeliveryManPasswordBodySc
 
 type ChangeDeliveryManPasswordBodySchema = z.infer<typeof changeDeliveryManPasswordBodySchema>
 
+@ApiTags('Delivery Men')
 @Controller('/delivery-men/:deliveryManId/change-password')
 @RolesGuard(Role.Admin)
 export class ChangeDeliveryManPasswordController {
@@ -28,6 +30,7 @@ export class ChangeDeliveryManPasswordController {
 
   @Put()
   @HttpCode(204)
+  @ApiOperation({ summary: 'Change Delivery Man Password' })
   async handle(
     @Body(bodyValidationPipe) body: ChangeDeliveryManPasswordBodySchema,
     @Param('deliveryManId') deliveryManId: string,

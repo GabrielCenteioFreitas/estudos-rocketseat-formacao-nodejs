@@ -6,7 +6,9 @@ import { CurrentUser } from "@/infra/auth/current-user.decorator";
 import { UserPayload } from "@/infra/auth/jwt.strategy";
 import { RolesGuard } from "@/infra/auth/rbac/rbac-decorator";
 import { BadRequestException, Controller, HttpCode, Param, Patch, UnauthorizedException } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
+@ApiTags('Orders')
 @Controller('/orders/:orderId/mark-as-returned')
 @RolesGuard(Role.Admin)
 export class MarkOrderAsReturnedController {
@@ -16,6 +18,7 @@ export class MarkOrderAsReturnedController {
 
   @Patch()
   @HttpCode(204)
+  @ApiOperation({ summary: 'Mark Order As Returned' })
   async handle(
     @Param('orderId') orderId: string,
     @CurrentUser() user: UserPayload,

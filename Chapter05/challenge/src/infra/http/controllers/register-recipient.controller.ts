@@ -2,6 +2,7 @@ import { CpfAlreadyInUseError } from "@/core/errors/use-cases/cpf-already-in-use
 import { RegisterRecipientUseCase } from "@/domain/delivery/application/use-cases/register-recipient";
 import { Public } from "@/infra/auth/public";
 import { BadRequestException, Body, ConflictException, Controller, HttpCode, Post } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { z } from "zod";
 import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
 
@@ -19,6 +20,7 @@ const bodyValidationPipe = new ZodValidationPipe(registerRecipientBodySchema)
 
 type RegisterRecipientBodySchema = z.infer<typeof registerRecipientBodySchema>
 
+@ApiTags('Recipients')
 @Controller('/register/recipient')
 @Public()
 export class RegisterRecipientController {
@@ -28,6 +30,7 @@ export class RegisterRecipientController {
 
   @Post()
   @HttpCode(201)
+  @ApiOperation({ summary: 'Register Recipient' })
   async handle(
     @Body(bodyValidationPipe) body: RegisterRecipientBodySchema
   ) {

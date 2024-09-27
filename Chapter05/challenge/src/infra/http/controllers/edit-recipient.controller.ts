@@ -5,7 +5,8 @@ import { EditRecipientUseCase } from "@/domain/delivery/application/use-cases/ed
 import { CurrentUser } from "@/infra/auth/current-user.decorator";
 import { UserPayload } from "@/infra/auth/jwt.strategy";
 import { RolesGuard } from "@/infra/auth/rbac/rbac-decorator";
-import { BadRequestException, Body, Controller, HttpCode, Param, Post, Put, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Body, Controller, HttpCode, Param, Put, UnauthorizedException } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { z } from "zod";
 import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
 
@@ -17,6 +18,7 @@ const bodyValidationPipe = new ZodValidationPipe(editRecipientBodySchema)
 
 type EditRecipientBodySchema = z.infer<typeof editRecipientBodySchema>
 
+@ApiTags('Recipients')
 @Controller('/recipients/:recipientId')
 @RolesGuard(Role.Admin)
 export class EditRecipientController {
@@ -26,6 +28,7 @@ export class EditRecipientController {
 
   @Put()
   @HttpCode(204)
+  @ApiOperation({ summary: 'Edit Recipient' })
   async handle(
     @Body(bodyValidationPipe) body: EditRecipientBodySchema,
     @CurrentUser() user: UserPayload,

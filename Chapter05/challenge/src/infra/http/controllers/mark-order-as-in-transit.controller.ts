@@ -6,7 +6,9 @@ import { CurrentUser } from "@/infra/auth/current-user.decorator";
 import { UserPayload } from "@/infra/auth/jwt.strategy";
 import { RolesGuard } from "@/infra/auth/rbac/rbac-decorator";
 import { BadRequestException, Controller, HttpCode, Param, Patch, UnauthorizedException } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
+@ApiTags('Orders')
 @Controller('/orders/:orderId/mark-as-in-transit')
 @RolesGuard(Role.DeliveryMan)
 export class MarkOrderAsInTransitController {
@@ -16,6 +18,7 @@ export class MarkOrderAsInTransitController {
 
   @Patch()
   @HttpCode(204)
+  @ApiOperation({ summary: 'Mark Order As In Transit' })
   async handle(
     @Param('orderId') orderId: string,
     @CurrentUser() user: UserPayload,

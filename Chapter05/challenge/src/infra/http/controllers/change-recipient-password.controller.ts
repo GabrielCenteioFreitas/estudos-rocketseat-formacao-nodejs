@@ -1,14 +1,15 @@
 import { InvalidCredentialsError } from "@/core/errors/use-cases/invalid-credentials-error";
+import { NotAllowedError } from "@/core/errors/use-cases/not-allowed-error";
+import { ResourceNotFoundError } from "@/core/errors/use-cases/resource-not-found-error";
 import { Role } from "@/core/types/roles";
 import { ChangeRecipientPasswordUseCase } from "@/domain/delivery/application/use-cases/change-recipient-password";
 import { CurrentUser } from "@/infra/auth/current-user.decorator";
 import { UserPayload } from "@/infra/auth/jwt.strategy";
 import { RolesGuard } from "@/infra/auth/rbac/rbac-decorator";
-import { BadRequestException, Body, Controller, HttpCode, Param, Post, Put, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Body, Controller, HttpCode, Param, Put, UnauthorizedException } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { z } from "zod";
 import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
-import { ResourceNotFoundError } from "@/core/errors/use-cases/resource-not-found-error";
-import { NotAllowedError } from "@/core/errors/use-cases/not-allowed-error";
 
 const changeRecipientPasswordBodySchema = z.object({
   password: z.string().min(6),
@@ -19,6 +20,7 @@ const bodyValidationPipe = new ZodValidationPipe(changeRecipientPasswordBodySche
 
 type ChangeRecipientPasswordBodySchema = z.infer<typeof changeRecipientPasswordBodySchema>
 
+@ApiTags('Recipients')
 @Controller('/recipients/:recipientId/change-password')
 @RolesGuard(Role.Admin)
 export class ChangeRecipientPasswordController {
@@ -28,6 +30,7 @@ export class ChangeRecipientPasswordController {
 
   @Put()
   @HttpCode(204)
+  @ApiOperation({ summary: 'Change Recipient Password' })
   async handle(
     @Body(bodyValidationPipe) body: ChangeRecipientPasswordBodySchema,
     @Param('recipientId') recipientId: string,

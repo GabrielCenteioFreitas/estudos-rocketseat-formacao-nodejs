@@ -1,6 +1,4 @@
 import { Role } from "@/core/types/roles";
-import { CPF } from "@/domain/delivery/enterprise/entities/value-objects/cpf";
-import { Location } from "@/domain/delivery/enterprise/entities/value-objects/location";
 import { AppModule } from "@/infra/app.module";
 import { DatabaseModule } from "@/infra/database/database.module";
 import { INestApplication } from "@nestjs/common";

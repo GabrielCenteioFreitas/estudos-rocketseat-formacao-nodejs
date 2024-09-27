@@ -6,8 +6,10 @@ import { CurrentUser } from "@/infra/auth/current-user.decorator";
 import { UserPayload } from "@/infra/auth/jwt.strategy";
 import { RolesGuard } from "@/infra/auth/rbac/rbac-decorator";
 import { BadRequestException, Controller, Get, HttpCode, Param, UnauthorizedException } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { OrderPresenter } from "../presenters/order-presenter";
 
+@ApiTags('Orders')
 @Controller('/delivery-men/:deliveryManId/orders')
 @RolesGuard(Role.Admin, Role.DeliveryMan)
 export class FetchDeliveryManOrdersController {
@@ -17,6 +19,7 @@ export class FetchDeliveryManOrdersController {
 
   @Get()
   @HttpCode(200)
+  @ApiOperation({ summary: 'Fetch Delivery Man Orders' })
   async handle(
     @CurrentUser() user: UserPayload,
     @Param('deliveryManId') deliveryManId: string,

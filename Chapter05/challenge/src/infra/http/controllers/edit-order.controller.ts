@@ -6,6 +6,7 @@ import { CurrentUser } from "@/infra/auth/current-user.decorator";
 import { UserPayload } from "@/infra/auth/jwt.strategy";
 import { RolesGuard } from "@/infra/auth/rbac/rbac-decorator";
 import { BadRequestException, Body, Controller, HttpCode, Param, Put, UnauthorizedException } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { z } from "zod";
 import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
 
@@ -18,6 +19,7 @@ const bodyValidationPipe = new ZodValidationPipe(editOrderBodySchema)
 
 type EditOrderBodySchema = z.infer<typeof editOrderBodySchema>
 
+@ApiTags('Recipients')
 @Controller('/orders/:orderId')
 @RolesGuard(Role.Admin)
 export class EditOrderController {
@@ -27,6 +29,7 @@ export class EditOrderController {
 
   @Put()
   @HttpCode(204)
+  @ApiOperation({ summary: 'Edit Recipient' })
   async handle(
     @Body(bodyValidationPipe) body: EditOrderBodySchema,
     @CurrentUser() user: UserPayload,

@@ -4,6 +4,7 @@ import { Public } from "@/infra/auth/public";
 import { BadRequestException, Body, Controller, HttpCode, Post } from "@nestjs/common";
 import { z } from "zod";
 import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
 const authenticateAdminBodySchema = z.object({
   cpf: z.string().length(11),
@@ -14,6 +15,7 @@ const bodyValidationPipe = new ZodValidationPipe(authenticateAdminBodySchema)
 
 type AuthenticateAdminBodySchema = z.infer<typeof authenticateAdminBodySchema>
 
+@ApiTags('Admins')
 @Controller('/sessions/admin')
 @Public()
 export class AuthenticateAdminController {
@@ -23,6 +25,7 @@ export class AuthenticateAdminController {
 
   @Post()
   @HttpCode(200)
+  @ApiOperation({ summary: 'Authenticate Admin' })
   async handle(
     @Body(bodyValidationPipe) body: AuthenticateAdminBodySchema
   ) {

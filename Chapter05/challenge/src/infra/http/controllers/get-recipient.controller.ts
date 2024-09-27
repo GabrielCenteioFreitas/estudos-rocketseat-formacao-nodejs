@@ -6,8 +6,10 @@ import { CurrentUser } from "@/infra/auth/current-user.decorator";
 import { UserPayload } from "@/infra/auth/jwt.strategy";
 import { RolesGuard } from "@/infra/auth/rbac/rbac-decorator";
 import { BadRequestException, Controller, Get, HttpCode, Param, UnauthorizedException } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { RecipientPresenter } from "../presenters/recipient-presenter";
 
+@ApiTags('Recipients')
 @Controller('/recipients/:recipientId')
 @RolesGuard(Role.Admin)
 export class GetRecipientController {
@@ -17,6 +19,7 @@ export class GetRecipientController {
 
   @Get()
   @HttpCode(200)
+  @ApiOperation({ summary: 'Get Recipient' })
   async handle(
     @CurrentUser() user: UserPayload,
     @Param('recipientId') recipientId: string,

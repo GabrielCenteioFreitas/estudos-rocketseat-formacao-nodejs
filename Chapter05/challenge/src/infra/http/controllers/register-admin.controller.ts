@@ -2,6 +2,7 @@ import { CpfAlreadyInUseError } from "@/core/errors/use-cases/cpf-already-in-use
 import { RegisterAdminUseCase } from "@/domain/delivery/application/use-cases/register-admin";
 import { Public } from "@/infra/auth/public";
 import { BadRequestException, Body, ConflictException, Controller, HttpCode, Post } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { z } from "zod";
 import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
 
@@ -15,6 +16,7 @@ const bodyValidationPipe = new ZodValidationPipe(registerAdminBodySchema)
 
 type RegisterAdminBodySchema = z.infer<typeof registerAdminBodySchema>
 
+@ApiTags('Admins')
 @Controller('/register/admin')
 @Public()
 export class RegisterAdminController {
@@ -24,6 +26,7 @@ export class RegisterAdminController {
 
   @Post()
   @HttpCode(201)
+  @ApiOperation({ summary: 'Register Admin' })
   async handle(
     @Body(bodyValidationPipe) body: RegisterAdminBodySchema
   ) {

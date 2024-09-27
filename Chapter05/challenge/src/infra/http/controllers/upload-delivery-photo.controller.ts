@@ -4,6 +4,7 @@ import { UploadDeliveryPhotoUseCase } from "@/domain/delivery/application/use-ca
 import { RolesGuard } from "@/infra/auth/rbac/rbac-decorator";
 import { BadRequestException, Controller, FileTypeValidator, HttpCode, MaxFileSizeValidator, ParseFilePipe, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
 const uploadedFilePipe = new ParseFilePipe({
   validators: [
@@ -12,6 +13,7 @@ const uploadedFilePipe = new ParseFilePipe({
   ],
 })
 
+@ApiTags('Uploads')
 @Controller('/uploads/delivery-photo')
 @RolesGuard(Role.DeliveryMan)
 export class UploadAttachmentController {
@@ -21,6 +23,7 @@ export class UploadAttachmentController {
 
   @Post()
   @HttpCode(201)
+  @ApiOperation({ summary: 'Upload Delivery Photo' })
   @UseInterceptors(FileInterceptor('file'))
   async handle(
     @UploadedFile(uploadedFilePipe) file: Express.Multer.File

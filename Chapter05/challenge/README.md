@@ -16,14 +16,14 @@
 
 ## Regras de negócio (RNs)
 
-[-] Somente usuário do tipo admin pode realizar operações de CRUD nas encomendas
+[X] Somente usuário do tipo admin pode realizar operações de CRUD nas encomendas
 [X] Somente usuário do tipo admin pode realizar operações de CRUD dos entregadores
 [X] Somente usuário do tipo admin pode realizar operações de CRUD dos destinatários
-[-] Para marcar uma encomenda como entregue é obrigatório o envio de uma foto
+[X] Para marcar uma encomenda como entregue é obrigatório o envio de uma foto
 [X] Somente o entregador que retirou a encomenda pode marcar ela como entregue
 [X] Somente o admin pode alterar a senha de um usuário
-[-] Não deve ser possível um entregador listar as encomendas de outro entregador
+[X] Não deve ser possível um entregador listar as encomendas de outro entregador
 
 ## Regras Não Funcionais (RNFs)
 
-[ ] Utilização do ImgBB para upload de fotos das entregas
+[X] Utilização do ImgBB para upload de fotos das entregas

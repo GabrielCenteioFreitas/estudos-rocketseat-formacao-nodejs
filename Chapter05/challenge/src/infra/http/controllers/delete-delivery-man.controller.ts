@@ -6,7 +6,9 @@ import { CurrentUser } from "@/infra/auth/current-user.decorator";
 import { UserPayload } from "@/infra/auth/jwt.strategy";
 import { RolesGuard } from "@/infra/auth/rbac/rbac-decorator";
 import { BadRequestException, Controller, Delete, HttpCode, Param, UnauthorizedException } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
+@ApiTags('Delivery Men')
 @Controller('/delivery-men/:deliveryManId')
 @RolesGuard(Role.Admin)
 export class DeleteDeliveryManController {
@@ -16,6 +18,7 @@ export class DeleteDeliveryManController {
 
   @Delete()
   @HttpCode(204)
+  @ApiOperation({ summary: 'Delete Delivery Man' })
   async handle(
     @CurrentUser() user: UserPayload,
     @Param('deliveryManId') deliveryManId: string,

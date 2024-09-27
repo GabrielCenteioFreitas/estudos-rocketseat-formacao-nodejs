@@ -9,6 +9,7 @@ import { z } from "zod";
 import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
 import { ResourceNotFoundError } from "@/core/errors/use-cases/resource-not-found-error";
 import { NotAllowedError } from "@/core/errors/use-cases/not-allowed-error";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
 const changeAdminPasswordBodySchema = z.object({
   password: z.string().min(6),
@@ -19,6 +20,7 @@ const bodyValidationPipe = new ZodValidationPipe(changeAdminPasswordBodySchema)
 
 type ChangeAdminPasswordBodySchema = z.infer<typeof changeAdminPasswordBodySchema>
 
+@ApiTags('Admins')
 @Controller('/admins/:adminId/change-password')
 @RolesGuard(Role.Admin)
 export class ChangeAdminPasswordController {
@@ -28,6 +30,7 @@ export class ChangeAdminPasswordController {
 
   @Put()
   @HttpCode(204)
+  @ApiOperation({ summary: 'Change Admin Password' })
   async handle(
     @Body(bodyValidationPipe) body: ChangeAdminPasswordBodySchema,
     @Param('adminId') adminId: string,

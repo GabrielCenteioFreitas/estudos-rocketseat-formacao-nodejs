@@ -4,6 +4,7 @@ import { Public } from "@/infra/auth/public";
 import { BadRequestException, Body, Controller, HttpCode, Post } from "@nestjs/common";
 import { z } from "zod";
 import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
 const authenticateDeliveryManBodySchema = z.object({
   cpf: z.string().length(11),
@@ -14,6 +15,7 @@ const bodyValidationPipe = new ZodValidationPipe(authenticateDeliveryManBodySche
 
 type AuthenticateDeliveryManBodySchema = z.infer<typeof authenticateDeliveryManBodySchema>
 
+@ApiTags('Delivery Men')
 @Controller('/sessions/delivery-man')
 @Public()
 export class AuthenticateDeliveryManController {
@@ -23,6 +25,7 @@ export class AuthenticateDeliveryManController {
 
   @Post()
   @HttpCode(200)
+  @ApiOperation({ summary: 'Authenticate Delivery Man' })
   async handle(
     @Body(bodyValidationPipe) body: AuthenticateDeliveryManBodySchema
   ) {

@@ -6,8 +6,9 @@ import { CurrentUser } from "@/infra/auth/current-user.decorator";
 import { UserPayload } from "@/infra/auth/jwt.strategy";
 import { RolesGuard } from "@/infra/auth/rbac/rbac-decorator";
 import { BadRequestException, Body, Controller, HttpCode, Param, Patch, UnauthorizedException } from "@nestjs/common";
-import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { z } from "zod";
+import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
 
 const markOrderAsDeliveredBodySchema = z.object({
   url: z.string().url(),
@@ -17,6 +18,7 @@ const bodyValidationPipe = new ZodValidationPipe(markOrderAsDeliveredBodySchema)
 
 type MarkOrderAsDeliveredBodySchema = z.infer<typeof markOrderAsDeliveredBodySchema>
 
+@ApiTags('Orders')
 @Controller('/orders/:orderId/mark-as-delivered')
 @RolesGuard(Role.DeliveryMan)
 export class MarkOrderAsDeliveredController {
@@ -26,6 +28,7 @@ export class MarkOrderAsDeliveredController {
 
   @Patch()
   @HttpCode(204)
+  @ApiOperation({ summary: 'Mark Order As Delivered' })
   async handle(
     @Param('orderId') orderId: string,
     @Body(bodyValidationPipe) body: MarkOrderAsDeliveredBodySchema,

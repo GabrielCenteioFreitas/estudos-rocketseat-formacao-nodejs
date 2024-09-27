@@ -2,8 +2,10 @@ import { NotAllowedError } from "@/core/errors/use-cases/not-allowed-error";
 import { ResourceNotFoundError } from "@/core/errors/use-cases/resource-not-found-error";
 import { GetOrderUseCase } from "@/domain/delivery/application/use-cases/get-order";
 import { BadRequestException, Controller, Get, HttpCode, Param, UnauthorizedException } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { OrderDetailsPresenter } from "../presenters/order-details-presenter";
 
+@ApiTags('Orders')
 @Controller('/orders/:orderId')
 export class GetOrderController {
   constructor(
@@ -12,6 +14,7 @@ export class GetOrderController {
 
   @Get()
   @HttpCode(200)
+  @ApiOperation({ summary: 'Get Order' })
   async handle(
     @Param('orderId') orderId: string,
   ) {
