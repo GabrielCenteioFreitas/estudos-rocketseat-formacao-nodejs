@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">Rocketseat Ignite - NodeJS</h1>
+  <h1 align="center">Rocketseat - Formação NodeJS</h1>
 </p>
 
 <br>
